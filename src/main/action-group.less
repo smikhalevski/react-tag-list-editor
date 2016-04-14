@@ -1,0 +1,30 @@
+.action-theme(
+  @bg;
+  @color:         inherit;
+  @hover-color:   @color;
+  @shadow-spread: 4px;
+) {
+  color: @color;
+
+  &:focus,
+  &:hover {
+    color: @hover-color;
+  }
+  &-group {
+    background: @bg;
+    box-shadow: -@shadow-spread 0 @shadow-spread @bg;
+  }
+}
+
+.action {
+  a&:focus,
+  a&:hover {
+    text-decoration: none;
+  }
+  &-group {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+}
