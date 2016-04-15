@@ -20,7 +20,7 @@ class Demo extends Component {
         <div className="row">
           <div className="col-md-4">
 
-            <TagInput className="form-control"/>
+            <TagInput className="form-control" tags={['foooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'bar1', 'bar2', 'bar3', 'bar4', 'bar5', 'bar6', 'bar7', 'bar8', 'bar9', 'bar0', 'bar11']}/>
 
           </div>
         </div>

@@ -275,17 +275,17 @@ export class TagInput extends React.Component {
       classNames = classNames.concat(className);
     }
     if (disabled) {
-      classNames.push('disabled');
+      classNames.push('tag-input--disabled');
     }
     if (this.state.focused) {
-      classNames.push('focused');
+      classNames.push('tag-input--focus');
     }
     return (
       <div {...props}
            className={classNames.join(' ')}
            onMouseDown={this.onControlMouseDown}
            tabIndex="-1">
-        <div className="tags">
+        <div className="tag-list">
           {tags.map((tag, i) => {
             if (name) {
               var hiddenPost = <input type="hidden" name={name} value={tag}/>;
@@ -293,30 +293,31 @@ export class TagInput extends React.Component {
             return (
               <div key={tag}
                    ref={tag}
-                   className="tag"
+                   className="tag-list__item"
                    tabIndex="-1"
                    onKeyDown={e => this.onTagKeyDown(e, tags, i)}>
+                <div className="tag-list__item__delete">&times;</div>
                 {hiddenPost}
+                {tag}
+
+
+
+                {/*
                 <div className="tag-content">{tag}</div>
-                <span className="action-group qux">
-                  <a className="action">
-                    <i className="fa fa-times-circle"/>
-                  </a>
-                </span>
                 <span className="action-group">
                   <a className="action"
                      onMouseDown={this.preventDefault}
                      onClick={e => this.onTagDeleteClick(e, tag)}>
                     <i className="fa fa-times-circle"/>
                   </a>
-                </span>
+                </span>*/}
               </div>
             );
           })}
           <Input ref="input"
                  value={this.getEnteredTag()}
                  disabled={disabled}
-                 className="inner-input"
+                 className="tag-input__input"
                  fitLineLength={true}
                  placeholder={placeholder}
                  onFocus={this.onInputFocus}

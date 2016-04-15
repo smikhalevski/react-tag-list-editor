@@ -1,45 +1,45 @@
-@tag-class:              tag;
-@tag-padding-vertical:   0;
-@tag-padding-horizontal: 7px;
-@tag-border-radius:      100px;
-// Spacings are added on both sides of tag, so they are
-// doubled between two neighboring tags.
-@tag-spacing-vertical:   2px;
-@tag-spacing-horizontal: 3px;
-@tag-border-width:       1px;
-
-// Defaults
-@tag-bg:                 #ddd;
-@tag-color:              #000;
-@tag-border:             transparent;
-
-.tag-theme(
-  @bg:     @tag-bg;
-  @color:  @tag-color;
-  @border: @tag-border;
-) {
-  background-color: @bg;
-  border-color: @border;
-  color: @color;
-}
-
-.@{tag-class} {
-  display: inline-block;
-  position: relative;
-  padding: @tag-padding-vertical @tag-padding-horizontal;
-  margin: @tag-spacing-vertical  @tag-spacing-horizontal;
-  border-radius: @tag-border-radius;
-  border: @tag-border-width solid transparent;
-  white-space: pre; // Keep spaces intact.
-
-  a& {
-    &:hover,
-    &:focus {
-      text-decoration: none;
-      cursor: pointer;
-    }
-  }
-
-  // Default theme.
-  .tag-theme();
-}
+//@tag-class:              tag;
+//@tag-padding-vertical:   0;
+//@tag-padding-horizontal: 7px;
+//@tag-border-radius:      100px;
+//// Spacings are added on both sides of tag, so they are
+//// doubled between two neighboring tags.
+//@tag-spacing-vertical:   2px;
+//@tag-spacing-horizontal: 3px;
+//@tag-border-width:       1px;
+//
+//// Defaults
+//@tag-bg:                 #ddd;
+//@tag-color:              #000;
+//@tag-border:             transparent;
+//
+//.tag-theme(
+//  @bg:     @tag-bg;
+//  @color:  @tag-color;
+//  @border: @tag-border;
+//) {
+//  background-color: @bg;
+//  border-color: @border;
+//  color: @color;
+//}
+//
+//.@{tag-class} {
+//  display: inline-block;
+//  position: relative;
+//  padding: @tag-padding-vertical @tag-padding-horizontal;
+//  margin: @tag-spacing-vertical  @tag-spacing-horizontal;
+//  border-radius: @tag-border-radius;
+//  border: @tag-border-width solid transparent;
+//  white-space: pre; // Keep spaces intact.
+//
+//  a& {
+//    &:hover,
+//    &:focus {
+//      text-decoration: none;
+//      cursor: pointer;
+//    }
+//  }
+//
+//  // Default theme.
+//  .tag-theme();
+//}

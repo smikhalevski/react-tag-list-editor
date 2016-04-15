@@ -1,10 +1,78 @@
-@import './tag';
-@import './action-group';
+@tag-list-class:                   tag-list;
+@tag-list-item-padding-vertical:   0;
+@tag-list-item-padding-horizontal: 7px;
+@tag-list-item-border-radius:      100px;
+// Spacings are added on both sides of tag, so they are
+// doubled between two neighboring tags.
+@tag-list-item-spacing-vertical:   2px;
+@tag-list-item-spacing-horizontal: 3px;
+@tag-list-item-border-width:       1px;
+
+// Defaults
+@tag-list-item-bg:                 #ddd;
+@tag-list-item-color:              #000;
+@tag-list-item-border:             transparent;
+
+.tag-list-item-theme(
+  @bg:     @tag-list-item-bg;
+  @color:  @tag-list-item-color;
+  @border: @tag-list-item-border;
+) {
+  background-color: @bg;
+  border-color: @border;
+  color: @color;
+}
+
+.@{tag-list-class} {
+  &__item {
+    position: relative;
+    display: inline-block;
+    vertical-align: bottom;
+    overflow: hidden;
+    white-space: pre; // Keep spaces intact.
+    margin: @tag-list-item-spacing-vertical  @tag-list-item-spacing-horizontal;
+    padding: @tag-list-item-padding-vertical @tag-list-item-padding-horizontal;
+    border-radius: @tag-list-item-border-radius;
+    border: @tag-list-item-border-width solid transparent;
+
+    .tag-list-item-theme();
+
+    &__delete {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: inherit;
+      padding: @tag-list-item-padding-vertical @tag-list-item-padding-horizontal @tag-list-item-padding-vertical 0;
+      box-shadow: -4px 0 4px @tag-list-item-bg;
+    }
+  }
+  > .@{tag-list-class}__item {
+    max-width: calc(100% - ((@tag-list-item-spacing-horizontal * 2)));
+  }
+}
+
+a.@{tag-list-class}__item {
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+@tag-input-class:                tag-input;
 
 @tag-input-item-highlight-bg:    orange;
 @tag-input-item-highlight-color: white;
-@tag-input-item-bg:              @tag-bg;
-@tag-input-item-color:           @tag-color;
+//@tag-input-item-bg:              @tag-bg;
+//@tag-input-item-color:           @tag-color;
 
 @tag-input-active-bg: blue;
 @tag-input-active-color: white;
@@ -17,101 +85,110 @@
 @tag-input-border-width:         1px;
 @tag-input-transition:           .2s ease-in-out;
 
-
-.tag-input {
+.@{tag-input-class} {
   height: auto;
-  overflow: hidden;
-  white-space: normal;
-  font-weight: normal;
-  cursor: text;
 
-  .tags {
-    margin: (-@tag-spacing-vertical - @tag-input-border-width) 0;
+  &__input {
+    margin: @tag-list-item-spacing-vertical  @tag-list-item-spacing-horizontal;
+    padding: @tag-list-item-padding-vertical @tag-list-item-padding-horizontal;
+    border: @tag-list-item-border-width solid transparent;
   }
-  .tag {
-    .tag-theme(@bg: @tag-input-item-bg; @color: @tag-input-item-color);
-    max-width: calc(100% - ((@tag-spacing-horizontal * 2)));
-    white-space: nowrap;
-    overflow: hidden;
-    vertical-align: top;
-    cursor: default;
-
-    &-content {
-      display: inline-block;
-      white-space: pre;
-    }
-    &:not(.no-transition) {
-      &,
-      .action,
-      .action-group {
-        transition: @tag-input-transition;
-        transition-property: box-shadow, background-color, border-color, color;
-      }
-    }
-  }
-  .action-group {
-    margin-left: 6px;
-
-    &:not(.qux) {
-      padding-right: @tag-padding-horizontal;
-    }
-  }
-  &.form-control {
-    .tags {
-      margin: (-@tag-spacing-vertical - @tag-padding-vertical - @tag-input-border-width) (-@tag-padding-horizontal);
-    }
-  }
-  .text-input.inner-input {
-    &:extend(.tag);
-    .tag-theme(@bg: transparent; @color: inherit);
-    max-width: calc(100% - ((@tag-spacing-horizontal * 2))) !important;
-    vertical-align: top;
-
-    // Placeholder can overflow undecorated input.
-    .text-input__placeholder {
-      overflow: visible;
-    }
+  .@{tag-list-class}__item {
+    padding-right: 20px;
   }
 
-  &:not(.disabled) .tag {
-    // Default tag state.
-    .action {
-      .action-theme(@tag-input-item-bg; fade(@tag-input-item-color, @tag-input-delete-fade));
-
-      &:hover {
-        // Change action opacity only if tag is
-        // placed in non-disabled input.
-        .action-theme(@tag-input-item-bg; @tag-input-item-color);
-      }
-    }
-    // Focused tag state.
-    &:focus {
-      .tag-theme(@tag-input-active-bg; @tag-input-active-color);
-      .action {
-        .action-theme(@tag-input-active-bg; fade(@tag-input-active-color, @tag-input-delete-fade));
-
-        &:hover {
-          .action-theme(@tag-input-active-bg; @tag-input-active-color);
-        }
-      }
-    }
-    // Highlighted tag state.
-    &-highlight {
-      .tag-theme(@tag-input-item-highlight-bg; @tag-input-item-highlight-color);
-      .action {
-        .action-theme(@tag-input-item-highlight-bg; fade(@tag-input-item-highlight-color, @tag-input-delete-fade));
-
-        &:hover {
-          .action-theme(@tag-input-item-highlight-bg; @tag-input-item-highlight-color);
-        }
-      }
-    }
-  }
-  // Disabled tag state.
-  &.disabled .tag {
-    .tag-theme(@tag-input-disabled-bg; @tag-input-disabled-color; @tag-input-item-disabled-border-color);
-    .action {
-      .action-theme(@tag-input-disabled-bg; fade(@tag-input-disabled-color, @tag-input-delete-fade));
-    }
-  }
+  //overflow: hidden;
+  //white-space: normal;
+  //font-weight: normal;
+  //cursor: text;
+  //
+  //.tags {
+  //  margin: (-@tag-spacing-vertical - @tag-input-border-width) 0;
+  //}
+  //.tag {
+  //  .tag-theme(@bg: @tag-input-item-bg; @color: @tag-input-item-color);
+  //  max-width: calc(100% - ((@tag-spacing-horizontal * 2)));
+  //  white-space: nowrap;
+  //  overflow: hidden;
+  //  vertical-align: top;
+  //  cursor: default;
+  //
+  //  &-content {
+  //    display: inline-block;
+  //    white-space: pre;
+  //  }
+  //  &:not(.no-transition) {
+  //    &,
+  //    .action,
+  //    .action-group {
+  //      transition: @tag-input-transition;
+  //      transition-property: box-shadow, background-color, border-color, color;
+  //    }
+  //  }
+  //}
+  //.action-group {
+  //  margin-left: 6px;
+  //
+  //  &:not(.qux) {
+  //    padding-right: @tag-padding-horizontal;
+  //  }
+  //}
+  //&.form-control {
+  //  .tags {
+  //    margin: (-@tag-spacing-vertical - @tag-padding-vertical - @tag-input-border-width) (-@tag-padding-horizontal);
+  //  }
+  //}
+  //.text-input.inner-input {
+  //  &:extend(.tag);
+  //  .tag-theme(@bg: transparent; @color: inherit);
+  //  max-width: calc(100% - ((@tag-spacing-horizontal * 2))) !important;
+  //  vertical-align: top;
+  //
+  //  // Placeholder can overflow undecorated input.
+  //  .text-input__placeholder {
+  //    overflow: visible;
+  //  }
+  //}
+  //
+  //&:not(.disabled) .tag {
+  //  // Default tag state.
+  //  .action {
+  //    .action-theme(@tag-input-item-bg; fade(@tag-input-item-color, @tag-input-delete-fade));
+  //
+  //    &:hover {
+  //      // Change action opacity only if tag is
+  //      // placed in non-disabled input.
+  //      .action-theme(@tag-input-item-bg; @tag-input-item-color);
+  //    }
+  //  }
+  //  // Focused tag state.
+  //  &:focus {
+  //    .tag-theme(@tag-input-active-bg; @tag-input-active-color);
+  //    .action {
+  //      .action-theme(@tag-input-active-bg; fade(@tag-input-active-color, @tag-input-delete-fade));
+  //
+  //      &:hover {
+  //        .action-theme(@tag-input-active-bg; @tag-input-active-color);
+  //      }
+  //    }
+  //  }
+  //  // Highlighted tag state.
+  //  &-highlight {
+  //    .tag-theme(@tag-input-item-highlight-bg; @tag-input-item-highlight-color);
+  //    .action {
+  //      .action-theme(@tag-input-item-highlight-bg; fade(@tag-input-item-highlight-color, @tag-input-delete-fade));
+  //
+  //      &:hover {
+  //        .action-theme(@tag-input-item-highlight-bg; @tag-input-item-highlight-color);
+  //      }
+  //    }
+  //  }
+  //}
+  //// Disabled tag state.
+  //&.disabled .tag {
+  //  .tag-theme(@tag-input-disabled-bg; @tag-input-disabled-color; @tag-input-item-disabled-border-color);
+  //  .action {
+  //    .action-theme(@tag-input-disabled-bg; fade(@tag-input-disabled-color, @tag-input-delete-fade));
+  //  }
+  //}
 }
