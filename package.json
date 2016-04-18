@@ -52,7 +52,6 @@
   "dependencies": {
     "react": ">=0.13.0",
     "react-dom": ">=0.13.0",
-    "react-text-input": "^0.0.1",
-    "react-scroll-box": "^0.2.0"
+    "react-text-input": "^0.0.1"
   }
 }
