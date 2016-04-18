@@ -1,6 +1,6 @@
-# React Tag Input Component v0.0.1
+# React Tag List Editor v0.0.1
 
-[API and Live Demo](http://smikhalevski.github.io/react-tag-input/)
+[API and Live Demo](http://smikhalevski.github.io/react-tag-list-editor/)
 
 ## License
 
