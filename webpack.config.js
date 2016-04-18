@@ -1,3 +1,5 @@
+var path = require('path');
+
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
@@ -8,6 +10,12 @@ module.exports = {
     path: './target/out',
     filename: '[name].js',
     libraryTarget: 'commonjs'
+  },
+  resolve: {
+    root: path.resolve(__dirname, 'node_modules'),
+    fallback: [
+      path.resolve(__dirname, '..')
+    ]
   },
   externals: [
     {
