@@ -101,10 +101,12 @@ export class TagInput extends React.Component {
     let created = [],
         ignored = [];
     for (let tag of tags) {
-      if (existing.indexOf(tag) < 0) {
-        created.push(tag);
-      } else {
-        ignored.push(tag);
+      if (tag.length) {
+        if (existing.indexOf(tag) < 0) {
+          created.push(tag);
+        } else {
+          ignored.push(tag);
+        }
       }
     }
     this.highlight(...ignored);
