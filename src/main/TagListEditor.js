@@ -8,7 +8,7 @@ const
   HIGHLIGHT_CLASS = 'tag-list__item--highlighted',
   NO_TRANSITION_CLASS = 'tag-list__item--prevent-animation';
 
-export class TagInput extends React.Component {
+export class TagListEditor extends React.Component {
 
   static defaultProps = {
     tags: [],
@@ -268,15 +268,15 @@ export class TagInput extends React.Component {
       // Use placeholder only if no tags were added yet.
       placeholder = '';
     }
-    let classNames = ['tag-input'];
+    let classNames = ['tag-list-editor'];
     if (className) {
       classNames = classNames.concat(className);
     }
     if (disabled) {
-      classNames.push('tag-input--disabled');
+      classNames.push('tag-list-editor--disabled');
     }
     if (this.state.focused) {
-      classNames.push('tag-input--focus');
+      classNames.push('tag-list-editor--focus');
     }
     return (
       <div {...rest}
@@ -308,7 +308,7 @@ export class TagInput extends React.Component {
           <Input ref="input"
                  value={this.getEnteredTag()}
                  disabled={disabled}
-                 className="tag-input__input"
+                 className="tag-list-editor__input"
                  fitLineLength={true}
                  placeholder={placeholder}
                  onFocus={this.onInputFocus}

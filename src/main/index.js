@@ -1,3 +1,3 @@
-import './tag-input.less';
+import './tag-list-input.less';
 
-export {TagInput} from './TagInput';
+export {TagListEditor} from './TagListEditor';

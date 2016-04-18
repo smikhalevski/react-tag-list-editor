@@ -5,7 +5,7 @@ import ReactDOM, {findDOMNode} from 'react-dom';
 import classNames from 'classnames';
 
 import './index.less';
-import {TagInput} from '../main/TagInput';
+import {TagListEditor} from '../main/TagListEditor';
 
 class Demo extends Component {
 
@@ -16,11 +16,11 @@ class Demo extends Component {
   render() {
     return (
       <div className="container">
-        <h1><span className="light">React</span> Tag Input <span className="light">0.0.1</span></h1>
+        <h1><span className="light">React</span> Tag List Input <span className="light">0.0.1</span></h1>
         <div className="row">
           <div className="col-md-4">
 
-            <TagInput className="form-control" tags={this.state.tags}
+            <TagListEditor className="form-control" tags={this.state.tags}
                       placeholder="Fooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
                       onTagsChange={tags => this.setState({tags})}/>
 

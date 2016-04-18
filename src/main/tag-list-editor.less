@@ -1,18 +1,18 @@
-@tag-input-class:                tag-input;
+@tag-list-editor-class:                tag-list-editor;
 
-@tag-input-item-highlight-bg:    orange;
-@tag-input-item-highlight-color: white;
+@tag-list-editor-item-highlight-bg:    orange;
+@tag-list-editor-item-highlight-color: white;
 
-@tag-input-item-active-bg:            blue;
-@tag-input-item-active-color:         white;
-@tag-input-item-disabled-bg:          gray;
-@tag-input-item-disabled-color:       white;
+@tag-list-editor-item-active-bg:       blue;
+@tag-list-editor-item-active-color:    white;
+@tag-list-editor-item-disabled-bg:     gray;
+@tag-list-editor-item-disabled-color:  white;
 
-@tag-input-item-disabled-border-color: darkgray;
+@tag-list-editor-item-disabled-border-color: darkgray;
 
-@tag-input-delete-fade:          30%;
-@tag-input-border-width:         1px;
-@tag-input-transition:           .2s ease-in-out;
+@tag-list-editor-delete-fade:          30%;
+@tag-list-editor-border-width:         1px;
+@tag-list-editor-transition:           .2s ease-in-out;
 
 @tag-list-class:                   tag-list;
 @tag-list-item-padding-vertical:   0;
@@ -56,7 +56,7 @@
 
     &,
     &__delete {
-      transition: @tag-input-transition;
+      transition: @tag-list-editor-transition;
       transition-property: box-shadow, background-color, border-color, color;
     }
     &__delete {
@@ -79,30 +79,30 @@
     }
     &:focus {
       outline: none 0;
-      .tag-list-item-theme(@tag-input-item-active-bg; @tag-input-item-active-color);
+      .tag-list-item-theme(@tag-list-editor-item-active-bg; @tag-list-editor-item-active-color);
 
       .@{tag-list-class}__item__delete {
-        background-color: @tag-input-item-active-bg;
-        box-shadow: -4px 0 4px @tag-input-item-active-bg;
+        background-color: @tag-list-editor-item-active-bg;
+        box-shadow: -4px 0 4px @tag-list-editor-item-active-bg;
       }
     }
 
     // Highlighted tag state.
     &--highlighted {
-      .tag-list-item-theme(@tag-input-item-highlight-bg; @tag-input-item-highlight-color);
+      .tag-list-item-theme(@tag-list-editor-item-highlight-bg; @tag-list-editor-item-highlight-color);
 
       .@{tag-list-class}__item__delete {
-        background-color: @tag-input-item-highlight-bg;
-        box-shadow: -4px 0 4px @tag-input-item-highlight-bg;
+        background-color: @tag-list-editor-item-highlight-bg;
+        box-shadow: -4px 0 4px @tag-list-editor-item-highlight-bg;
       }
     }
     // Highlighted tag state.
     &--disabled {
-      .tag-list-item-theme(@tag-input-item-disabled-bg; @tag-input-item-disabled-color);
+      .tag-list-item-theme(@tag-list-editor-item-disabled-bg; @tag-list-editor-item-disabled-color);
 
       .@{tag-list-class}__item__delete {
-        background-color: @tag-input-item-disabled-bg;
-        box-shadow: -4px 0 4px @tag-input-item-disabled-bg;
+        background-color: @tag-list-editor-item-disabled-bg;
+        box-shadow: -4px 0 4px @tag-list-editor-item-disabled-bg;
       }
     }
     &--prevent-animation,
@@ -122,7 +122,7 @@ a.@{tag-list-class}__item {
   }
 }
 
-.@{tag-input-class} {
+.@{tag-list-editor-class} {
   height: auto;
   cursor: text;
   overflow: hidden;
