@@ -1,4 +1,4 @@
-# React Tag List Editor v0.0.1
+# React Tag List Editor v0.0.2
 
 [API and Live Demo](http://smikhalevski.github.io/react-tag-list-editor/)
 
