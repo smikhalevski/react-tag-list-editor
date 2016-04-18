@@ -18,12 +18,12 @@
   "keywords": [
     "react",
     "tag",
+    "tags",
     "pill",
     "input",
+    "editor",
     "autogrow",
-    "autoheight",
-    "scrollbar",
-    "scroll"
+    "autoheight"
   ],
   "scripts": {
     "package": "webpack --p",
