@@ -10,7 +10,7 @@ import {TagInput} from '../main/TagInput';
 class Demo extends Component {
 
   state = {
-    value: ''
+    tags: ['foooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'bar1', 'bar2', 'bar3', 'bar4', 'bar5', 'bar6', 'bar7', 'bar8', 'bar9', 'bar0', 'bar11']
   };
 
   render() {
@@ -20,7 +20,9 @@ class Demo extends Component {
         <div className="row">
           <div className="col-md-4">
 
-            <TagInput className="form-control" tags={['foooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo', 'bar1', 'bar2', 'bar3', 'bar4', 'bar5', 'bar6', 'bar7', 'bar8', 'bar9', 'bar0', 'bar11']}/>
+            <TagInput className="form-control" tags={this.state.tags}
+                      placeholder="Fooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                      onTagsChange={tags => this.setState({tags})}/>
 
           </div>
         </div>

@@ -1,4 +1,5 @@
-var webpack = require('webpack');
+var path = require('path'),
+    webpack = require('webpack');
 
 var HtmlWebpackPlugin = require('html-webpack-plugin'),
     ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -10,6 +11,12 @@ module.exports = {
   output: {
     path: './target/demo',
     filename: '[name].js'
+  },
+  resolve: {
+    root: path.resolve(__dirname, 'node_modules'),
+    fallback: [
+      path.resolve(__dirname, '..')
+    ]
   },
   plugins: [
     new HtmlWebpackPlugin({

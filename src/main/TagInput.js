@@ -1,15 +1,22 @@
 import React from 'react';
 import {findDOMNode} from 'react-dom';
-import {Input} from 'react-text-input';
+import {Input} from 'react-text-input/src/main/Input';
 
 const {any, arrayOf, string, bool, oneOfType, instanceOf, func} = React.PropTypes;
 
 const
-  HIGHLIGHT_CLASS = 'tag-highlight',
-  NO_TRANSITION_CLASS = 'no-transition';
+  HIGHLIGHT_CLASS = 'tag-list__item--highlighted',
+  NO_TRANSITION_CLASS = 'tag-list__item--prevent-animation';
 
 export class TagInput extends React.Component {
 
+  static defaultProps = {
+    tags: [],
+    disabled: false,
+    delimiter: /\s+/,
+    onInputChange: tag => {},
+    onTagsChange: tags => {}
+  };
   static propTypes = {
     tags: arrayOf(string),
     name: string,
@@ -19,13 +26,6 @@ export class TagInput extends React.Component {
     onInputChange: func,
     onTagsChange: func
   };
-  static defaultProps = {
-    tags: [],
-    disabled: false,
-    delimiter: /\s+/,
-    onInputChange: tag => {},
-    onTagsChange: tags => {}
-  };
 
   state = {
     enteredTag: '',
@@ -33,7 +33,7 @@ export class TagInput extends React.Component {
   };
 
   onInputChange = e => {
-    let value = e.target.value;
+    let {value} = e.target;
     this.setEnteredTag(value);
     this.props.onInputChange(value);
   };
@@ -42,6 +42,10 @@ export class TagInput extends React.Component {
 
   onInputBlur = e => this.setState({focused: false});
 
+  _getTagElement(tag) {
+    return findDOMNode(this.refs['tag_' + tag]);
+  }
+
   /**
    * Get current value of text input.
    *
@@ -49,7 +53,7 @@ export class TagInput extends React.Component {
    * @name TagInput#getEnteredTag
    * @return {String}
    */
-  getEnteredTag () {
+  getEnteredTag() {
     return this.state.enteredTag;
   }
 
@@ -65,13 +69,14 @@ export class TagInput extends React.Component {
    * @name TagInput#setEnteredTag
    * @param {String} tag user-typed value.
    */
-  setEnteredTag (tag) {
+  setEnteredTag(tag) {
+    const {delimiter} = this.props;
     let tags;
-    if (this.props.delimiter == null) {
+    if (delimiter == null) {
       // No delimiter = no splitting.
       tags = [tag];
     } else {
-      tags = tag.split(this.props.delimiter);
+      tags = tag.split(delimiter);
     }
     if (tags.length > 1) {
       tag = tags.pop();
@@ -89,24 +94,22 @@ export class TagInput extends React.Component {
    * @name TagInput#saveTags
    * @param {...String} tags Tags to add.
    */
-  saveTags (...tags) {
-    //let state = compact(this.props.tags);
-    let state = this.props.tags;
+  saveTags(...tags) {
+    let existing = this.props.tags;
 
-    // Separate tags that exist and already rendered.
-    let part0 = [],
-        part1 = [];
-
+    // Separate tags that already exist and newly created.
+    let created = [],
+        ignored = [];
     for (let tag of tags) {
-      if (state.indexOf(tag) < 0) {
-        part0.push(tag);
+      if (existing.indexOf(tag) < 0) {
+        created.push(tag);
       } else {
-        part1.push(tag);
+        ignored.push(tag);
       }
     }
-    this.highlight(...part0);
-    if (part1.length) {
-      this.props.onTagsChange(state.concat(part1));
+    this.highlight(...ignored);
+    if (created.length) {
+      this.props.onTagsChange(existing.concat(created));
     }
   }
 
@@ -117,15 +120,15 @@ export class TagInput extends React.Component {
    * @name TagInput#highlight
    * @param {...String} tags Tags to highlight.
    */
-  highlight (...tags) {
-    tags.forEach(tag => {
-      let el = this.refs[tag];
-      if (el.classList.contains(HIGHLIGHT_CLASS)) {
-        return; // Tag is already highlighted.
+  highlight(...tags) {
+    for (let tag of tags) {
+      let el = this._getTagElement(tag);
+      if (!el || el.classList.contains(HIGHLIGHT_CLASS)) {
+        continue; // Tag does already highlighted.
       }
       el.classList.add(HIGHLIGHT_CLASS);
       setTimeout(() => el.classList.remove(HIGHLIGHT_CLASS), 600);
-    });
+    }
   }
 
   /**
@@ -135,26 +138,27 @@ export class TagInput extends React.Component {
    * @name TagInput#removeTags
    * @param {...String} tags Tags to remove.
    */
-  removeTags (...tags) {
+  removeTags(...tags) {
     let update = this.props.tags.filter(tag => tags.indexOf(tag) < 0);
-    equality: if (update.length == tags.length) {
+    equal: if (update.length == tags.length) {
       for (let i = 0; i < tags.length; ++i) {
         if (update[i] != tags[i]) {
-          break equality;
+          break equal;
         }
       }
     }
+    // A change was detected so invoke event listener.
     this.props.onTagsChange(update);
   }
 
-  onTagDeleteClick (e, tag) {
+  onTagDeleteClick(e, tag) {
     if (this.props.disabled) {
       return;
     }
     this.removeTags(tag);
   }
 
-  onInputKeyDown (e, tags) {
+  onInputKeyDown(e, tags) {
     if (this.props.disabled) {
       return;
     }
@@ -163,7 +167,7 @@ export class TagInput extends React.Component {
         // Prevent page scrolling.
         e.preventDefault();
         if (tags.length) {
-          this.refs[tags[0]].focus();
+          this._getTagElement(tags[0]).focus();
         }
         break;
       case 8 : // Backspace
@@ -172,18 +176,18 @@ export class TagInput extends React.Component {
         if (tags.length && e.target.selectionEnd == 0) {
           // Prevent `Return to Previous Page` action in IE.
           e.preventDefault();
-          this.refs[tags[tags.length - 1]].focus();
+          this._getTagElement(tags[tags.length - 1]).focus();
         }
         break;
       case 13: // Enter
         e.preventDefault();
-        var tag = this.state.enteredTag;
+        let tag = this.state.enteredTag;
         this.setState({enteredTag: ''}, () => this.saveTags(tag));
         break;
     }
   }
 
-  onTagKeyDown (e, tags, i) {
+  onTagKeyDown(e, tags, i) {
     if (this.props.disabled) {
       return;
     }
@@ -195,12 +199,12 @@ export class TagInput extends React.Component {
     switch (e.keyCode) {
       case 37: // Left
         if (i > 0) {
-          this.refs[tags[i - 1]].focus();
+          this._getTagElement(tags[i - 1]).focus();
         }
         break;
       case 39: // Right
         if (i < tags.length - 1) {
-          this.refs[tags[i + 1]].focus();
+          this._getTagElement(tags[i + 1]).focus();
         } else {
           input.focus();
         }
@@ -213,7 +217,7 @@ export class TagInput extends React.Component {
       case 33: // PgUp
       case 36: // Home
       case 38: // Up
-        this.refs[tags[0]].focus();
+        this._getTagElement(tags[0]).focus();
         break;
       case 8: // Backspace
         if (i > 0) {
@@ -222,7 +226,7 @@ export class TagInput extends React.Component {
         break;
       case 46: // Delete
         if (i < tags.length - 1) {
-          this.refs[tags[i + 1]].focus();
+          this._getTagElement(tags[i + 1]).focus();
         } else {
           input.focus();
         }
@@ -235,30 +239,22 @@ export class TagInput extends React.Component {
     let el = findDOMNode(this),
         input = findDOMNode(this.refs.input);
     el.addEventListener('focus', e => input.focus());
-    //el.addEventListener('focus', e => {
-    //  let tag = e.target;
-    //  if (values(this.refs).includes(tag)) {
-    //    tag.classList.add(NO_TRANSITION_CLASS);
-    //  }
-    //}, true);
-    //el.addEventListener('blur', e => {
-    //  let tag = e.target;
-    //  if (values(this.refs).includes(tag)) {
-    //    setTimeout(() => tag.classList.remove(NO_TRANSITION_CLASS), 0);
-    //  }
-    //}, true);
+    el.addEventListener('focus', e => {
+      let tagEl = e.target;
+      if (tagEl.hasAttribute('data-tag')) {
+        tagEl.classList.add(NO_TRANSITION_CLASS);
+      }
+    }, true);
+    el.addEventListener('blur', e => {
+      let tagEl = e.target;
+      if (tagEl.hasAttribute('data-tag')) {
+        setTimeout(() => tagEl.classList.remove(NO_TRANSITION_CLASS), 10);
+      }
+    }, true);
   }
 
-  onControlMouseDown = e => {
-    // In IE user can accidentally focus placeholder.
-    if (!/input/i.test(e.target.tagName)) {
-      e.preventDefault();
-      findDOMNode(this.refs.input).focus();
-    }
-  };
-
   render() {
-    let {tags, name, placeholder, disabled, className, children, delimiter, ...props} = this.props;
+    let {tags, name, placeholder, disabled, className, children, delimiter, ...rest} = this.props;
 
     let distinctTags = [];
     for (let tag of tags) {
@@ -281,36 +277,29 @@ export class TagInput extends React.Component {
       classNames.push('tag-input--focus');
     }
     return (
-      <div {...props}
+      <div {...rest}
            className={classNames.join(' ')}
-           onMouseDown={this.onControlMouseDown}
            tabIndex="-1">
         <div className="tag-list">
           {tags.map((tag, i) => {
             if (name) {
-              var hiddenPost = <input type="hidden" name={name} value={tag}/>;
+              var hiddenInput = <input type="hidden" name={name} value={tag}/>;
             }
             return (
               <div key={tag}
-                   ref={tag}
+                   ref={'tag_' + tag}
+                   data-tag
                    className="tag-list__item"
                    tabIndex="-1"
                    onKeyDown={e => this.onTagKeyDown(e, tags, i)}>
-                <div className="tag-list__item__delete">&times;</div>
-                {hiddenPost}
-                {tag}
-
-
-
-                {/*
-                <div className="tag-content">{tag}</div>
-                <span className="action-group">
-                  <a className="action"
-                     onMouseDown={this.preventDefault}
+                <div className="tag-list__item__delete">
+                  <a className="tag-list__item__delete__button"
                      onClick={e => this.onTagDeleteClick(e, tag)}>
                     <i className="fa fa-times-circle"/>
                   </a>
-                </span>*/}
+                </div>
+                {hiddenInput}
+                {tag}
               </div>
             );
           })}

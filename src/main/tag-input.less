@@ -1,3 +1,19 @@
+@tag-input-class:                tag-input;
+
+@tag-input-item-highlight-bg:    orange;
+@tag-input-item-highlight-color: white;
+
+@tag-input-item-active-bg:            blue;
+@tag-input-item-active-color:         white;
+@tag-input-item-disabled-bg:          gray;
+@tag-input-item-disabled-color:       white;
+
+@tag-input-item-disabled-border-color: darkgray;
+
+@tag-input-delete-fade:          30%;
+@tag-input-border-width:         1px;
+@tag-input-transition:           .2s ease-in-out;
+
 @tag-list-class:                   tag-list;
 @tag-list-item-padding-vertical:   0;
 @tag-list-item-padding-horizontal: 7px;
@@ -34,16 +50,64 @@
     padding: @tag-list-item-padding-vertical @tag-list-item-padding-horizontal;
     border-radius: @tag-list-item-border-radius;
     border: @tag-list-item-border-width solid transparent;
+    cursor: pointer;
 
     .tag-list-item-theme();
 
+    &,
+    &__delete {
+      transition: @tag-input-transition;
+      transition-property: box-shadow, background-color, border-color, color;
+    }
     &__delete {
       position: absolute;
       top: 0;
       right: 0;
-      background-color: inherit;
-      padding: @tag-list-item-padding-vertical @tag-list-item-padding-horizontal @tag-list-item-padding-vertical 0;
+      background-color: @tag-list-item-bg;
+      padding: @tag-list-item-padding-vertical (@tag-list-item-padding-horizontal - 3) @tag-list-item-padding-vertical 0;
       box-shadow: -4px 0 4px @tag-list-item-bg;
+
+      &__button {
+        color: inherit;
+        opacity: .4;
+
+        &:hover {
+          color: inherit;
+          opacity: 1;
+        }
+      }
+    }
+    &:focus {
+      outline: none 0;
+      .tag-list-item-theme(@tag-input-item-active-bg; @tag-input-item-active-color);
+
+      .@{tag-list-class}__item__delete {
+        background-color: @tag-input-item-active-bg;
+        box-shadow: -4px 0 4px @tag-input-item-active-bg;
+      }
+    }
+
+    // Highlighted tag state.
+    &--highlighted {
+      .tag-list-item-theme(@tag-input-item-highlight-bg; @tag-input-item-highlight-color);
+
+      .@{tag-list-class}__item__delete {
+        background-color: @tag-input-item-highlight-bg;
+        box-shadow: -4px 0 4px @tag-input-item-highlight-bg;
+      }
+    }
+    // Highlighted tag state.
+    &--disabled {
+      .tag-list-item-theme(@tag-input-item-disabled-bg; @tag-input-item-disabled-color);
+
+      .@{tag-list-class}__item__delete {
+        background-color: @tag-input-item-disabled-bg;
+        box-shadow: -4px 0 4px @tag-input-item-disabled-bg;
+      }
+    }
+    &--prevent-animation,
+    &--prevent-animation * {
+      transition: none 0s;
     }
   }
   > .@{tag-list-class}__item {
@@ -58,137 +122,22 @@ a.@{tag-list-class}__item {
   }
 }
 
-
-
-
-
-
-
-
-
-
-@tag-input-class:                tag-input;
-
-@tag-input-item-highlight-bg:    orange;
-@tag-input-item-highlight-color: white;
-//@tag-input-item-bg:              @tag-bg;
-//@tag-input-item-color:           @tag-color;
-
-@tag-input-active-bg: blue;
-@tag-input-active-color: white;
-@tag-input-disabled-bg: gray;
-@tag-input-disabled-color: white;
-
-@tag-input-item-disabled-border-color: darkgray;
-
-@tag-input-delete-fade:          30%;
-@tag-input-border-width:         1px;
-@tag-input-transition:           .2s ease-in-out;
-
 .@{tag-input-class} {
   height: auto;
+  cursor: text;
+  overflow: hidden;
 
   &__input {
     margin: @tag-list-item-spacing-vertical  @tag-list-item-spacing-horizontal;
     padding: @tag-list-item-padding-vertical @tag-list-item-padding-horizontal;
     border: @tag-list-item-border-width solid transparent;
   }
+  .text-input,
+  .text-input__placeholder {
+    // Placeholder can overflow undecorated input.
+    overflow: visible;
+  }
   .@{tag-list-class}__item {
     padding-right: 20px;
   }
-
-  //overflow: hidden;
-  //white-space: normal;
-  //font-weight: normal;
-  //cursor: text;
-  //
-  //.tags {
-  //  margin: (-@tag-spacing-vertical - @tag-input-border-width) 0;
-  //}
-  //.tag {
-  //  .tag-theme(@bg: @tag-input-item-bg; @color: @tag-input-item-color);
-  //  max-width: calc(100% - ((@tag-spacing-horizontal * 2)));
-  //  white-space: nowrap;
-  //  overflow: hidden;
-  //  vertical-align: top;
-  //  cursor: default;
-  //
-  //  &-content {
-  //    display: inline-block;
-  //    white-space: pre;
-  //  }
-  //  &:not(.no-transition) {
-  //    &,
-  //    .action,
-  //    .action-group {
-  //      transition: @tag-input-transition;
-  //      transition-property: box-shadow, background-color, border-color, color;
-  //    }
-  //  }
-  //}
-  //.action-group {
-  //  margin-left: 6px;
-  //
-  //  &:not(.qux) {
-  //    padding-right: @tag-padding-horizontal;
-  //  }
-  //}
-  //&.form-control {
-  //  .tags {
-  //    margin: (-@tag-spacing-vertical - @tag-padding-vertical - @tag-input-border-width) (-@tag-padding-horizontal);
-  //  }
-  //}
-  //.text-input.inner-input {
-  //  &:extend(.tag);
-  //  .tag-theme(@bg: transparent; @color: inherit);
-  //  max-width: calc(100% - ((@tag-spacing-horizontal * 2))) !important;
-  //  vertical-align: top;
-  //
-  //  // Placeholder can overflow undecorated input.
-  //  .text-input__placeholder {
-  //    overflow: visible;
-  //  }
-  //}
-  //
-  //&:not(.disabled) .tag {
-  //  // Default tag state.
-  //  .action {
-  //    .action-theme(@tag-input-item-bg; fade(@tag-input-item-color, @tag-input-delete-fade));
-  //
-  //    &:hover {
-  //      // Change action opacity only if tag is
-  //      // placed in non-disabled input.
-  //      .action-theme(@tag-input-item-bg; @tag-input-item-color);
-  //    }
-  //  }
-  //  // Focused tag state.
-  //  &:focus {
-  //    .tag-theme(@tag-input-active-bg; @tag-input-active-color);
-  //    .action {
-  //      .action-theme(@tag-input-active-bg; fade(@tag-input-active-color, @tag-input-delete-fade));
-  //
-  //      &:hover {
-  //        .action-theme(@tag-input-active-bg; @tag-input-active-color);
-  //      }
-  //    }
-  //  }
-  //  // Highlighted tag state.
-  //  &-highlight {
-  //    .tag-theme(@tag-input-item-highlight-bg; @tag-input-item-highlight-color);
-  //    .action {
-  //      .action-theme(@tag-input-item-highlight-bg; fade(@tag-input-item-highlight-color, @tag-input-delete-fade));
-  //
-  //      &:hover {
-  //        .action-theme(@tag-input-item-highlight-bg; @tag-input-item-highlight-color);
-  //      }
-  //    }
-  //  }
-  //}
-  //// Disabled tag state.
-  //&.disabled .tag {
-  //  .tag-theme(@tag-input-disabled-bg; @tag-input-disabled-color; @tag-input-item-disabled-border-color);
-  //  .action {
-  //    .action-theme(@tag-input-disabled-bg; fade(@tag-input-disabled-color, @tag-input-delete-fade));
-  //  }
-  //}
 }
