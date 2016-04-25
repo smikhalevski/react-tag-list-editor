@@ -2,7 +2,7 @@
 
 [![npm version](https://badge.fury.io/js/react-tag-list-editor.svg)](https://www.npmjs.com/package/react-tag-list-editor)
 
-[Live Demo](http://smikhalevski.github.io/react-tag-list-editor/)
+[**Live Demo**](http://smikhalevski.github.io/react-tag-list-editor/)
 
 ## Usage
 
