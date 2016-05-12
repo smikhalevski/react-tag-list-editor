@@ -4,18 +4,15 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   entry: {
-    index: './src/main/index.js'
+    index: [
+      './src/main/index.js',
+      './src/main/index.less'
+    ]
   },
   output: {
     path: './target/out',
     filename: '[name].js',
     libraryTarget: 'commonjs'
-  },
-  resolve: {
-    root: path.resolve(__dirname, 'node_modules'),
-    fallback: [
-      path.resolve(__dirname, '..')
-    ]
   },
   externals: [
     {
@@ -23,6 +20,12 @@ module.exports = {
       'react-dom': true
     }
   ],
+  resolve: {
+    root: [
+      path.resolve(__dirname, '..'),
+      path.resolve(__dirname, 'node_modules')
+    ]
+  },
   plugins: [
     new ExtractTextPlugin('[name].css')
   ],

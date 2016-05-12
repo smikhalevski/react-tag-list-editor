@@ -13,9 +13,9 @@ module.exports = {
     filename: '[name].js'
   },
   resolve: {
-    root: path.resolve(__dirname, 'node_modules'),
-    fallback: [
-      path.resolve(__dirname, '..')
+    root: [
+      path.resolve(__dirname, '..'),
+      path.resolve(__dirname, 'node_modules')
     ]
   },
   plugins: [

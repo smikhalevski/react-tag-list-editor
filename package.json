@@ -10,6 +10,7 @@
   },
   "homepage": "https://github.com/smikhalevski/react-tag-list-editor",
   "main": "target/out/index.js",
+  "webpack": "src/main/index.js",
   "files": [
     "src/main/",
     "target/out/",
