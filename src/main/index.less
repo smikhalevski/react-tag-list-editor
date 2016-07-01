@@ -40,6 +40,8 @@
 }
 
 .@{tag-list-class} {
+  white-space: nowrap;
+
   &__item {
     position: relative;
     display: inline-block;
@@ -54,73 +56,73 @@
 
     .tag-list-item-theme();
 
-    &,
-    &__delete {
-      transition: @tag-list-editor-transition;
-      transition-property: box-shadow, background-color, border-color, color;
-    }
-    &__delete {
-      position: absolute;
-      top: 0;
-      right: 0;
-      background-color: @tag-list-item-bg;
-      padding: @tag-list-item-padding-vertical (@tag-list-item-padding-horizontal - 3) @tag-list-item-padding-vertical 0;
-      box-shadow: -4px 0 4px @tag-list-item-bg;
-
-      &__button {
-        color: inherit;
-        opacity: .4;
-
-        &:hover {
-          color: inherit;
-          opacity: 1;
-        }
-      }
-    }
-    &:focus {
+    //&,
+    //&__delete {
+    //  transition: @tag-list-editor-transition;
+    //  transition-property: box-shadow, background-color, border-color, color;
+    //}
+    //&__delete {
+    //  position: absolute;
+    //  top: 0;
+    //  right: 0;
+    //  background-color: @tag-list-item-bg;
+    //  padding: @tag-list-item-padding-vertical (@tag-list-item-padding-horizontal - 3) @tag-list-item-padding-vertical 0;
+    //  box-shadow: -4px 0 4px @tag-list-item-bg;
+    //
+    //  &__button {
+    //    color: inherit;
+    //    opacity: .4;
+    //
+    //    &:hover {
+    //      color: inherit;
+    //      opacity: 1;
+    //    }
+    //  }
+    //}
+    &--focus {
       outline: none 0;
       .tag-list-item-theme(@tag-list-editor-item-active-bg; @tag-list-editor-item-active-color);
 
-      .@{tag-list-class}__item__delete {
-        background-color: @tag-list-editor-item-active-bg;
-        box-shadow: -4px 0 4px @tag-list-editor-item-active-bg;
-      }
+      //.@{tag-list-class}__item__delete {
+      //  background-color: @tag-list-editor-item-active-bg;
+      //  box-shadow: -4px 0 4px @tag-list-editor-item-active-bg;
+      //}
     }
 
     // Highlighted tag state.
-    &--highlighted {
-      .tag-list-item-theme(@tag-list-editor-item-highlight-bg; @tag-list-editor-item-highlight-color);
+    //&--highlighted {
+    //  .tag-list-item-theme(@tag-list-editor-item-highlight-bg; @tag-list-editor-item-highlight-color);
 
-      .@{tag-list-class}__item__delete {
-        background-color: @tag-list-editor-item-highlight-bg;
-        box-shadow: -4px 0 4px @tag-list-editor-item-highlight-bg;
-      }
-    }
+      //.@{tag-list-class}__item__delete {
+      //  background-color: @tag-list-editor-item-highlight-bg;
+      //  box-shadow: -4px 0 4px @tag-list-editor-item-highlight-bg;
+      //}
+    //}
     // Highlighted tag state.
     &--disabled {
       .tag-list-item-theme(@tag-list-editor-item-disabled-bg; @tag-list-editor-item-disabled-color);
 
-      .@{tag-list-class}__item__delete {
-        background-color: @tag-list-editor-item-disabled-bg;
-        box-shadow: -4px 0 4px @tag-list-editor-item-disabled-bg;
-      }
+      //.@{tag-list-class}__item__delete {
+      //  background-color: @tag-list-editor-item-disabled-bg;
+      //  box-shadow: -4px 0 4px @tag-list-editor-item-disabled-bg;
+      //}
     }
-    &--prevent-animation,
-    &--prevent-animation * {
-      transition: none 0s;
-    }
+    //&--focus,
+    //&--focus * {
+    //  transition: none 0s;
+    //}
   }
-  > .@{tag-list-class}__item {
+  .@{tag-list-class}__item {
     max-width: calc(100% - ((@tag-list-item-spacing-horizontal * 2)));
   }
 }
 
-a.@{tag-list-class}__item {
-  &:hover,
-  &:focus {
-    text-decoration: none;
-  }
-}
+//a.@{tag-list-class}__item {
+//  &:hover,
+//  &:focus {
+//    text-decoration: none;
+//  }
+//}
 
 .@{tag-list-editor-class} {
   height: auto;
@@ -131,13 +133,14 @@ a.@{tag-list-class}__item {
     margin: @tag-list-item-spacing-vertical  @tag-list-item-spacing-horizontal;
     padding: @tag-list-item-padding-vertical @tag-list-item-padding-horizontal;
     border: @tag-list-item-border-width solid transparent;
-  }
-  .text-input,
-  .text-input__placeholder {
-    // Placeholder can overflow undecorated input.
     overflow: visible;
   }
-  .@{tag-list-class}__item {
-    padding-right: 20px;
-  }
+  //.text-input,
+  //.text-input__placeholder {
+    // Placeholder can overflow undecorated input.
+    //overflow: visible;
+  //}
+  //.@{tag-list-class}__item {
+  //  padding-right: 20px;
+  //}
 }

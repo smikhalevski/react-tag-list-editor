@@ -2,166 +2,99 @@ import React from 'react';
 import {findDOMNode} from 'react-dom';
 import {Input} from 'react-text-input/src/main/Input';
 
-const {any, arrayOf, string, bool, oneOfType, instanceOf, func} = React.PropTypes;
-
-const
-  HIGHLIGHT_CLASS = 'tag-list__item--highlighted',
-  NO_TRANSITION_CLASS = 'tag-list__item--prevent-animation';
+const {any, array, string, bool, oneOfType, instanceOf, func} = React.PropTypes;
 
 export class TagListEditor extends React.Component {
 
+  static propTypes = {
+    tags: array,
+    disabled: bool,
+    delimiter: oneOfType([instanceOf(RegExp), string]),
+    renderTag: func,
+    className: any,
+    onInputChange: func,
+    onTagAdd: func,
+    onTagDelete: func
+  };
   static defaultProps = {
     tags: [],
     disabled: false,
     delimiter: /\s+/,
-    onInputChange: tag => {},
-    onTagsChange: tags => {}
-  };
-  static propTypes = {
-    tags: arrayOf(string),
-    name: string,
-    disabled: bool,
-    delimiter: oneOfType([instanceOf(RegExp), string]),
-    className: any,
-    onInputChange: func,
-    onTagsChange: func
+    renderTag: tag => tag,
+    onInputChange: (value, tagListEditor) => {},
+    onTagAdd: (value, tagListEditor) => {},
+    onTagDelete: (tag, tagListEditor) => {}
   };
 
   state = {
-    enteredTag: '',
+    value: '',
     focused: false
   };
 
-  onInputChange = e => {
-    let {value} = e.target;
-    this.setEnteredTag(value);
-    this.props.onInputChange(value);
-  };
-
-  onInputFocus = e => this.setState({focused: true});
-
-  onInputBlur = e => this.setState({focused: false});
-
-  _getTagElement(tag) {
-    return findDOMNode(this.refs['tag_' + tag]);
-  }
+  _tagElements = [];
 
   /**
    * Get current value of text input.
    *
    * @method
-   * @name TagInput#getEnteredTag
+   * @name TagListEditor#getValue
    * @return {String}
    */
-  getEnteredTag() {
-    return this.state.enteredTag;
+  getValue() {
+    return this.state.value;
   }
 
   /**
-   * Set user-entered tag.
+   * Set value edited in tag input.
    *
    * Tag parsing rules are applied here: if given value matches multi-tag
    * string it is splitted and all result tags except last are added to
-   * backing value via accessor. Last tag is set as `enteredTag`, so user
+   * backing value via accessor. Last tag is set as `value`, so user
    * can proceed editing it.
    *
    * @method
-   * @name TagInput#setEnteredTag
-   * @param {String} tag user-typed value.
+   * @name TagListEditor#setValue
+   * @param {String} value user-typed value.
    */
-  setEnteredTag(tag) {
-    const {delimiter} = this.props;
-    let tags;
-    if (delimiter == null) {
-      // No delimiter = no splitting.
-      tags = [tag];
-    } else {
-      tags = tag.split(delimiter);
-    }
-    if (tags.length > 1) {
-      tag = tags.pop();
-      this.saveTags(...tags);
-    }
-    this.setState({enteredTag: tag});
-  }
-
-  /**
-   * Add new tags to list of tags.
-   *
-   * Tags added only if they are unique.
-   *
-   * @method
-   * @name TagInput#saveTags
-   * @param {...String} tags Tags to add.
-   */
-  saveTags(...tags) {
-    let existing = this.props.tags;
-
-    // Separate tags that already exist and newly created.
-    let created = [],
-        ignored = [];
-    for (let tag of tags) {
-      if (tag.length) {
-        if (existing.indexOf(tag) < 0) {
-          created.push(tag);
-        } else {
-          ignored.push(tag);
+  setValue(value) {
+    const {delimiter, onTagAdd} = this.props;
+    if (delimiter) {
+      const values = value.split(delimiter);
+      if (values.length > 1) {
+        value = values.pop();
+        for (const value of values) {
+          onTagAdd(value, this);
         }
       }
     }
-    this.highlight(...ignored);
-    if (created.length) {
-      this.props.onTagsChange(existing.concat(created));
-    }
+    this.setState({value});
   }
 
   /**
-   * Temporarily highlights tags if rendered.
-   *
-   * @method
-   * @name TagInput#highlight
-   * @param {...String} tags Tags to highlight.
+   * Get tag element by tag object.
+   * @param {*} tag
+   * @returns {HTMLDivElement}
    */
-  highlight(...tags) {
-    for (let tag of tags) {
-      let el = this._getTagElement(tag);
-      if (!el || el.classList.contains(HIGHLIGHT_CLASS)) {
-        continue; // Tag does already highlighted.
-      }
-      el.classList.add(HIGHLIGHT_CLASS);
-      setTimeout(() => el.classList.remove(HIGHLIGHT_CLASS), 600);
-    }
+  getTagElement(tag) {
+    return this._tagElements[this.props.tags.indexOf(tag)];
   }
 
-  /**
-   * Remove tags from tag input.
-   *
-   * @method
-   * @name TagInput#removeTags
-   * @param {...String} tags Tags to remove.
-   */
-  removeTags(...tags) {
-    let update = this.props.tags.filter(tag => tags.indexOf(tag) < 0);
-    equal: if (update.length == tags.length) {
-      for (let i = 0; i < tags.length; ++i) {
-        if (update[i] != tags[i]) {
-          break equal;
-        }
-      }
+  _handleInputChange = e => {
+    const {value} = e.target;
+    if (this.props.onInputChange(value, this) === false) {
+      return; // Input change prevented.
     }
-    // A change was detected so invoke event listener.
-    this.props.onTagsChange(update);
-  }
+    this.setValue(value);
+  };
 
-  onTagDeleteClick(e, tag) {
-    if (this.props.disabled) {
-      return;
-    }
-    this.removeTags(tag);
-  }
+  _handleInputFocus = e => this.setState({focused: true});
 
-  onInputKeyDown(e, tags) {
-    if (this.props.disabled) {
+  _handleInputBlur = e => this.setState({focused: false});
+
+  _handleInputKeyDown = e => {
+    const {tags, disabled, onTagAdd} = this.props;
+
+    if (disabled) {
       return;
     }
     switch (e.keyCode) {
@@ -169,44 +102,47 @@ export class TagListEditor extends React.Component {
         // Prevent page scrolling.
         e.preventDefault();
         if (tags.length) {
-          this._getTagElement(tags[0]).focus();
+          this._tagElements[0].focus();
         }
         break;
       case 8 : // Backspace
       case 37: // Left
         // Only if cursor is in the most leftward position.
         if (tags.length && e.target.selectionEnd == 0) {
-          // Prevent `Return to Previous Page` action in IE.
+          // Prevent return to previous page action in IE.
           e.preventDefault();
-          this._getTagElement(tags[tags.length - 1]).focus();
+          this._tagElements[tags.length - 1].focus();
         }
         break;
       case 13: // Enter
         e.preventDefault();
-        let tag = this.state.enteredTag;
-        this.setState({enteredTag: ''}, () => this.saveTags(tag));
+        const {value} = this.state;
+        if (onTagAdd(value, this) === false) {
+          break; // Tag addition was rejected.
+        }
+        this.setState({value: ''});
         break;
     }
-  }
+  };
 
-  onTagKeyDown(e, tags, i) {
-    if (this.props.disabled) {
+  _handleTagKeyDown(e, i) {
+    const {tags, disabled, onTagDelete} = this.props;
+
+    if (disabled) {
       return;
     }
-    if (/3[7945368]|8|4[06]/.test(e.keyCode)) {
-      // Prevent page scrolling.
-      e.preventDefault();
-    }
-    let input = findDOMNode(this.refs.input);
+    const input = findDOMNode(this.refs.input);
     switch (e.keyCode) {
       case 37: // Left
+        e.preventDefault();
         if (i > 0) {
-          this._getTagElement(tags[i - 1]).focus();
+          this._tagElements[i - 1].focus();
         }
         break;
       case 39: // Right
+        e.preventDefault();
         if (i < tags.length - 1) {
-          this._getTagElement(tags[i + 1]).focus();
+          this._tagElements[i + 1].focus();
         } else {
           input.focus();
         }
@@ -214,25 +150,34 @@ export class TagListEditor extends React.Component {
       case 34: // PgDn
       case 35: // End
       case 40: // Down
+        e.preventDefault();
         input.focus();
         break;
       case 33: // PgUp
       case 36: // Home
       case 38: // Up
-        this._getTagElement(tags[0]).focus();
+        e.preventDefault();
+        this._tagElements[0].focus();
         break;
       case 8: // Backspace
+        e.preventDefault();
         if (i > 0) {
-          this.removeTags(tags[i - 1]);
+          if (onTagDelete(tags[i - 1], this) === false) {
+            break;
+          }
+          this._tagElements[i - 1].focus();
         }
         break;
       case 46: // Delete
+        e.preventDefault();
+        if (onTagDelete(tags[i], this) === false) {
+          break; // Tag delete was rejected.
+        }
         if (i < tags.length - 1) {
-          this._getTagElement(tags[i + 1]).focus();
+          this._tagElements[i + 1].focus();
         } else {
           input.focus();
         }
-        this.removeTags(tags[i]);
         break;
     }
   }
@@ -242,32 +187,22 @@ export class TagListEditor extends React.Component {
         input = findDOMNode(this.refs.input);
     el.addEventListener('focus', e => input.focus());
     el.addEventListener('focus', e => {
-      let tagEl = e.target;
-      if (tagEl.hasAttribute('data-tag')) {
-        tagEl.classList.add(NO_TRANSITION_CLASS);
+      if (this._tagElements.indexOf(e.target) > -1) {
+        e.target.classList.add('tag-list__item--focus');
       }
     }, true);
     el.addEventListener('blur', e => {
-      let tagEl = e.target;
-      if (tagEl.hasAttribute('data-tag')) {
-        setTimeout(() => tagEl.classList.remove(NO_TRANSITION_CLASS), 10);
+      if (this._tagElements.indexOf(e.target) > -1) {
+        setTimeout(() => e.target.classList.remove('tag-list__item--focus'), 5);
       }
     }, true);
   }
 
   render() {
-    let {tags, name, placeholder, disabled, className, children, delimiter, ...rest} = this.props;
+    const {tags, renderTag, placeholder, disabled, className} = this.props;
 
-    let distinctTags = [];
-    for (let tag of tags) {
-      if (distinctTags.indexOf(tag) < 0) {
-        distinctTags.push(tag);
-      }
-    }
-    if (tags.length) {
-      // Use placeholder only if no tags were added yet.
-      placeholder = '';
-    }
+    this._tagElements.length = tags.length;
+
     let classNames = ['tag-list-editor'];
     if (className) {
       classNames = classNames.concat(className);
@@ -279,42 +214,28 @@ export class TagListEditor extends React.Component {
       classNames.push('tag-list-editor--focus');
     }
     return (
-      <div {...rest}
-           className={classNames.join(' ')}
+      <div className={classNames.join(' ')}
            tabIndex="-1">
         <div className="tag-list">
-          {tags.map((tag, i) => {
-            if (name) {
-              var hiddenInput = <input type="hidden" name={name} value={tag}/>;
-            }
-            return (
-              <div key={tag}
-                   ref={'tag_' + tag}
-                   data-tag
-                   className="tag-list__item"
-                   tabIndex="-1"
-                   onKeyDown={e => this.onTagKeyDown(e, tags, i)}>
-                <div className="tag-list__item__delete">
-                  <a className="tag-list__item__delete__button"
-                     onClick={e => this.onTagDeleteClick(e, tag)}>
-                    <i className="fa fa-times-circle"/>
-                  </a>
-                </div>
-                {hiddenInput}
-                {tag}
-              </div>
-            );
-          })}
+          {tags.map((tag, i) =>
+            <div key={i}
+                 ref={ref => this._tagElements[i] = findDOMNode(ref)}
+                 className="tag-list__item"
+                 tabIndex="-1"
+                 onKeyDown={e => this._handleTagKeyDown(e, i)}>
+              {renderTag(tag)}
+            </div>
+          )}
           <Input ref="input"
-                 value={this.getEnteredTag()}
+                 value={this.state.value}
                  disabled={disabled}
                  className="tag-list-editor__input"
                  fitLineLength={true}
-                 placeholder={placeholder}
-                 onFocus={this.onInputFocus}
-                 onBlur={this.onInputBlur}
-                 onKeyDown={e => this.onInputKeyDown(e, tags)}
-                 onChange={this.onInputChange}/>
+                 placeholder={tags.length ? '' : placeholder}
+                 onFocus={this._handleInputFocus}
+                 onBlur={this._handleInputBlur}
+                 onKeyDown={this._handleInputKeyDown}
+                 onChange={this._handleInputChange}/>
         </div>
       </div>
     );

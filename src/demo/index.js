@@ -20,9 +20,11 @@ class Demo extends Component {
         <div className="row">
           <div className="col-md-4">
 
-            <TagListEditor className="form-control" tags={this.state.tags}
-                      placeholder="Fooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
-                      onTagsChange={tags => this.setState({tags})}/>
+            <TagListEditor className="form-control"
+                           tags={this.state.tags}
+                           placeholder="Fooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                           onTagAdd={value => this.setState({tags: this.state.tags.concat(value)})}
+                           onTagDelete={tag => {this.state.tags.splice(this.state.tags.indexOf(tag), 1); this.setState({tags: this.state.tags})}}/>
 
           </div>
         </div>
