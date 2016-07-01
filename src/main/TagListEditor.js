@@ -23,7 +23,7 @@ export class TagListEditor extends React.Component {
     renderTag: tag => tag,
     onInputChange: (value, tagListEditor) => {},
     onTagAdd: (value, tagListEditor) => {},
-    onTagDelete: (tag, tagListEditor) => {}
+    onTagDelete: (tag, index, tagListEditor) => {}
   };
 
   state = {
@@ -162,7 +162,7 @@ export class TagListEditor extends React.Component {
       case 8: // Backspace
         e.preventDefault();
         if (i > 0) {
-          if (onTagDelete(tags[i - 1], this) === false) {
+          if (onTagDelete(tags[i - 1], i, this) === false) {
             break;
           }
           this._tagElements[i - 1].focus();
@@ -170,7 +170,7 @@ export class TagListEditor extends React.Component {
         break;
       case 46: // Delete
         e.preventDefault();
-        if (onTagDelete(tags[i], this) === false) {
+        if (onTagDelete(tags[i], i, this) === false) {
           break; // Tag delete was rejected.
         }
         if (i < tags.length - 1) {
